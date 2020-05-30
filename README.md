@@ -6,7 +6,4 @@
   <li>
     Data source: https://data.world/makeovermonday/2020w7-world-wealth
   </li>
-  <li>
-    Cleaned dataset used for: https://public.tableau.com/profile/steffen.zou.weilun#!/vizhome/TotalWealthByRegionCountryIn2019/TotalWealthByRegionCountryIn2019
-  </li>
 </ul>
