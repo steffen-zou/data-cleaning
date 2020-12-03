@@ -1,0 +1,68 @@
+---
+title: ''
+output: html_document
+---
+
+## Data Cleaning For World Wealth 2019 Dataset
+
+I downloaded the dataset from Makeover Monday from [data.world](https://data.world/makeovermonday/2020w7-world-wealth).
+
+I used the cleaned dataset for visualisation which I published to [Tableau Public](https://public.tableau.com/profile/steffen.zou.weilun#!/vizhome/TotalWealthByRegionCountryIn2019/TotalWealthByRegionCountryIn2019).
+
+```{r message=FALSE}
+library(readxl)
+library(writexl)
+library(dplyr)
+
+world_wealth <- read_excel('WorldWealth.xlsx', sheet='WorldWealth')
+saved_column_names <- names(world_wealth)
+names(world_wealth) <- tolower(gsub('[ ()$]', '', names(world_wealth)))
+```
+
+
+## Remove Row With Missing Wealth
+
+```{r}
+filter(world_wealth, is.na(wealthb))
+```
+
+```{r}
+world_wealth <- filter(world_wealth, !is.na(wealthb))
+sum(is.na(select(world_wealth, wealthb)))
+```
+
+
+## Remove Dollar Sign And Comma From Wealth Column And Convert To Integer Type
+
+```{r}
+world_wealth <- mutate(world_wealth, wealthb=as.numeric(gsub('[$,]', '', wealthb)))
+```
+
+## Update Region 'China' and 'India' To 'Asia-Pacific'
+
+```{r}
+select(world_wealth, region) %>% unique()
+```
+
+```{r}
+filter(world_wealth, region %in% c('China', 'India'))
+```
+I verified that China and India are in the list of countries of the Asia-Pacific region. URL is https://apcss.org/about/ap-countries/.
+
+```{r}
+world_wealth <- mutate(world_wealth
+                       , region=ifelse(region %in% c('China', 'India')
+                                       , 'Asia-Pacific', region))
+
+filter(world_wealth, country %in% c('China', 'India'))
+```
+
+
+## Save Cleaned Data Set As A New File
+
+```{r}
+names(world_wealth) <- saved_column_names
+write_xlsx(list(WorldWealth = world_wealth), 'WorldWealth_cleaned.xlsx'
+           , format_headers = FALSE)
+```
+
